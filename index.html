@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <title>Visited Places</title>
+    <script src="d3/d3.v3.min.js"></script>
+    <script src="d3/topojson.v1.min.js"></script>
+    <script src="datamaps/datamaps.world.min.js"></script>
+</head>
+<body>
+    <h1>Visited Places</h1>
+    <div id="map1" style="position: relative;"></div>
+
+    <script src="countries.js"></script>
+    <script src="cities.js"></script>
+
+    <script>
+
+    var map = new Datamap({
+        scope: 'world',
+        element: document.getElementById('map1'),
+        projection: 'mercator',
+        responsive: true,
+        height: 700,
+        fills: {
+            defaultFill: '#D0D0D0',
+            visited: '#B0B0B0',
+            city: '#FC8050'
+        },
+        geographyConfig: {
+            highlightOnHover: true,
+            highlightFillColor: '#A0C0A0',
+            highlightBorderColor: '#F0F0F0',
+            popupOnHover: true,
+            popupTemplate: function(geography, data) {
+                return '<div class="hoverinfo"><b>' + geography.properties.name + '</b></div>';
+            },
+        },
+        bubblesConfig: {
+            borderWidth: 1,
+            borderColor: '#FFFFFF',
+            highlightOnHover: true,
+            popupOnHover: true,
+            popupTemplate: function(geo, data) {
+                return "<div class='hoverinfo'>" + data.name + ":<br>" + data.date + "</div>";
+            }
+        },
+
+        data: COUNTRIES
+    });
+
+    map.bubbles(CITIES);
+
+    window.addEventListener('resize', function() {
+        map.resize();
+    });
+
+    </script>
+</body>
