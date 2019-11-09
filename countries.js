@@ -1,0 +1,4 @@
+COUNTRIES =
+{
+    USA: {fillKey: 'visited'},
+}
