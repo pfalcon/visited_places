@@ -31,6 +31,10 @@ How to use:
   Internet. (E.g., you can use Github Pages, example is here:
   https://pfalcon.github.io/visited_places/).
 
+Customization:
+
+* Refer to [D3 Datamaps](http://datamaps.github.io/) docs and samples.
+
 Credits:
 
 Based on D3 Datamaps examples. Put together by Paul Sokolovsky. MIT
