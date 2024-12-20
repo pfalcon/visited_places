@@ -5,16 +5,31 @@
     <script src="d3/d3.v3.min.js"></script>
     <script src="d3/topojson.v1.min.js"></script>
     <script src="datamaps/datamaps.world.min.js"></script>
+    <style>
+        svg {
+            overflow: hidden;
+        }
+        .hoverinfo {
+            position: absolute;
+            background: white;
+            border: 1px solid gray;
+            padding: 5px;
+            border-radius: 5px;
+            pointer-events: none;
+            font-size: 12px;
+            z-index: 1000; /* Ensure tooltip is above everything */
+        }
+    </style>
 </head>
 <body>
     <h1>Visited Places</h1>
-    <div id="map1" style="position: relative;"></div>
+    <div id="map1" style="position: relative; width: 100%; height: 700px;"></div>
 
     <script src="countries.js"></script>
     <script src="cities.js"></script>
 
     <script>
-
+    // Create the map
     var map = new Datamap({
         scope: 'world',
         element: document.getElementById('map1'),
@@ -35,21 +50,66 @@
                 return '<div class="hoverinfo"><b>' + geography.properties.name + '</b></div>';
             },
         },
-        bubblesConfig: {
-            borderWidth: 1,
-            borderColor: '#FFFFFF',
-            highlightOnHover: true,
-            popupOnHover: true,
-            popupTemplate: function(geo, data) {
-                return "<div class='hoverinfo'>" + data.name + ":<br>" + data.date + "</div>";
-            }
-        },
-
         data: COUNTRIES
     });
 
-    map.bubbles(CITIES);
+    // Append the cities and the map to separate groups for zooming
+    var svg = d3.select('#map1').select('svg');
+    var gMap = svg.append('g'); // Group for world map
+    var gCities = svg.append('g'); // Separate group for cities (above the map)
 
+    // Move all map paths into the map group
+    svg.selectAll('.datamaps-subunit').each(function() {
+        gMap.node().appendChild(this);
+    });
+
+    // Add cities to their separate group
+    function drawCities() {
+        return gCities.selectAll('.city')
+            .data(CITIES)
+            .enter()
+            .append('circle')
+            .attr('class', 'city')
+            .attr('r', d => d.radius)
+            .attr('fill', d => map.options.fills[d.fillKey])
+            .attr('cx', d => map.latLngToXY(d.latitude, d.longitude)[0])
+            .attr('cy', d => map.latLngToXY(d.latitude, d.longitude)[1])
+            .on('mouseover', function(d) {
+                // Add hover functionality
+                d3.select(this).attr('stroke', 'black').attr('stroke-width', 2);
+                var tooltip = d3.select('body').append('div')
+                    .attr('class', 'hoverinfo')
+                    .style('left', (d3.event.pageX + 10) + 'px')
+                    .style('top', (d3.event.pageY + 10) + 'px')
+                    .html(d.name + ': ' + d.date);
+
+                d3.select(this).on('mousemove', function() {
+                    tooltip
+                        .style('left', (d3.event.pageX + 10) + 'px')
+                        .style('top', (d3.event.pageY + 10) + 'px');
+                });
+
+                d3.select(this).on('mouseout', function() {
+                    tooltip.remove();
+                    d3.select(this).attr('stroke', null);
+                });
+            });
+    }
+
+    var cities = drawCities();
+
+    // Enable zooming and panning
+    var zoom = d3.behavior.zoom()
+        .scaleExtent([1, 10]) // Zoom levels
+        .on('zoom', function() {
+            gMap.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
+            gCities.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
+        });
+
+    // Apply zoom behavior to the SVG
+    svg.call(zoom);
+
+    // Resize listener for responsiveness
     window.addEventListener('resize', function() {
         map.resize();
     });
