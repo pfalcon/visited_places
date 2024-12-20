@@ -3,5 +3,23 @@ COUNTRIES =
 {
     ITA: {fillKey: 'visited'},
     USA: {fillKey: 'visited'},
-    THA: {fillKey: 'visited'},
+
+    CAN: {fillKey: 'visited'},
+    KOR: {fillKey: 'visited'},
+    GBR: {fillKey: 'visited'},
+    FRA: {fillKey: 'visited'},
+    ESP: {fillKey: 'visited'},
+    CHE: {fillKey: 'visited'},
+    AUT: {fillKey: 'visited'},
+    HUN: {fillKey: 'visited'},
+    HRV: {fillKey: 'visited'},
+    NLD: {fillKey: 'visited'},
+    CZE: {fillKey: 'visited'},
+    TUR: {fillKey: 'visited'},
+    ISR: {fillKey: 'visited'},
+    CHN: {fillKey: 'visited'},
+    IDN: {fillKey: 'visited'},
+    MEX: {fillKey: 'visited'},
+    TWN: {fillKey: 'visited'},
+
 }
